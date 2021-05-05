@@ -1,0 +1,10 @@
+insert into Course (courseId, courseName, courseInstructor) values (1, 'English', 'Anderea Scamaden');
+insert into Course (courseId, courseName, courseInstructor) values (2, 'Mathematics', 'Eustace Niemetz');
+insert into Course (courseId, courseName, courseInstructor) values (3, 'Anatomy', 'Reynolds Pastor');
+insert into Course (courseId, courseName, courseInstructor) values (4, 'Organic Chemistry', 'Odessa Belcher');
+insert into Course (courseId, courseName, courseInstructor) values (5, 'Physics', 'Dani Swallow');
+insert into Course (courseId, courseName, courseInstructor) values (6, 'Digital Logic', 'Glenden Reilingen');
+insert into Course (courseId, courseName, courseInstructor) values (7, 'Object Oriented Programming', 'Giselle Ardy');
+insert into Course (courseId, courseName, courseInstructor) values (8, 'Data Structures', 'Carolan Stoller');
+insert into Course (courseId, courseName, courseInstructor) values (9, 'Politics', 'Carmita De Maine');
+insert into Course (courseId, courseName, courseInstructor) values (10, 'Art', 'Kingsly Doxsey');
