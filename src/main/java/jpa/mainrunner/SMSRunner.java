@@ -14,7 +14,8 @@ import jpa.entitymodels.Course;
 import jpa.entitymodels.Student;
 import jpa.service.CourseService;
 import jpa.service.StudentService;
-import jpa.util.EntyMgrUtil;
+import jpa.util.EntityManagerService;
+import jpa.util.InitializerService;
 
 import javax.persistence.EntityManager;
 
@@ -40,9 +41,7 @@ public class SMSRunner {
 		sb = new StringBuilder();
 		courseService = new CourseService();
 		studentService = new StudentService();
-
-		// DELETE
-		EntityManager entityManager = (new EntyMgrUtil()).getEntityManager();
+		new InitializerService().initializeData();
 	}
 
 	public static void main(String[] args) {
