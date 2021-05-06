@@ -1,33 +1,16 @@
 package jpa.util;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
-public class EntyMgrUtil {
-
-    static private EntityManagerFactory entityManagerFactory;
-
-    public EntityManager getEntityManager() {
-
-        if (entityManagerFactory == null) {
-            entityManagerFactory = Persistence.createEntityManagerFactory("SmsDb");
-            initializeData();
-        }
-
-        return entityManagerFactory.createEntityManager();
-    }
+public class InitializerService extends EntityManagerService {
 
     private void initializeData() {
-        EntityManager em = (new EntyMgrUtil()).getEntityManager();
+        EntityManager em = getEntityManager();
         Path sqlFilePath;
 
         sqlFilePath = Paths.get("src/main/resources/sql-scripts/Course.sql");
@@ -35,7 +18,6 @@ public class EntyMgrUtil {
 
         sqlFilePath = Paths.get("src/main/resources/sql-scripts/Student.sql");
         executeQueries(sqlFilePath, em);
-
 
     }
 
@@ -51,13 +33,4 @@ public class EntyMgrUtil {
             System.out.println("Could not open file");
         }
     }
-
-    public static void shutdown() {
-        if (entityManagerFactory != null) {
-            entityManagerFactory.close();
-        }
-    }
-
-
-
 }
