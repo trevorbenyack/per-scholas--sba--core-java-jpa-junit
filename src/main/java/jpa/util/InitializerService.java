@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 public class InitializerService extends EntityManagerService {
 
-    private void initializeData() {
+    public void initializeData() {
         EntityManager em = getEntityManager();
         Path sqlFilePath;
 
