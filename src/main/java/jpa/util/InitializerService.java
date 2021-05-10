@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
 
+// This class populates the database with seed data
 public class InitializerService extends EntityManagerService {
 
     public void initializeData() {
