@@ -1,12 +1,8 @@
-/*
- * Filename: SMSRunner.java
-* Author: Stefanski
-* 02/25/2020 
- */
 package jpa.mainrunner;
 
 import static java.lang.System.out;
 
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,10 +10,6 @@ import jpa.entitymodels.Course;
 import jpa.entitymodels.Student;
 import jpa.service.CourseService;
 import jpa.service.StudentService;
-import jpa.util.EntityManagerService;
-import jpa.util.InitializerService;
-
-import javax.persistence.EntityManager;
 
 /**
  * 
@@ -29,11 +21,11 @@ import javax.persistence.EntityManager;
  */
 public class SMSRunner {
 
-	private Scanner sin;
-	private StringBuilder sb;
+	private final Scanner sin;
+	private final StringBuilder sb;
 
-	private CourseService courseService;
-	private StudentService studentService;
+	private final CourseService courseService;
+	private final StudentService studentService;
 	private Student currentStudent;
 
 	public SMSRunner() {
@@ -41,14 +33,14 @@ public class SMSRunner {
 		sb = new StringBuilder();
 		courseService = new CourseService();
 		studentService = new StudentService();
-		new InitializerService().initializeData();
+
+		// Uncomment line below to populate tables with seed data
+		// new InitializerService().initializeData();
 	}
 
 	public static void main(String[] args) {
-
 		SMSRunner sms = new SMSRunner();
 		sms.run();
-
 	}
 
 	private void run() {
@@ -57,84 +49,92 @@ public class SMSRunner {
 		case 1:
 			if (studentLogin()) {
 				registerMenu();
-			}
-			break;
+			} break;
 		case 2:
 			out.println("Goodbye!");
 			break;
-
 		default:
-
 		}
-	}
+	} // end run()
 
 	private int menu1() {
 		sb.append("\n1. Student Login\n2. Quit Application\nPlease Enter Selection: ");
 		out.print(sb);
 		sb.delete(0, sb.length());
-
 		return sin.nextInt();
-	}
+	} // end menu1()
 
 	private boolean studentLogin() {
-		boolean retValue = false;
 		out.print("Enter your email address: ");
 		String email = sin.next();
 		out.print("Enter your password: ");
 		String password = sin.next();
+		out.println();
 
-		Student student = studentService.getStudentByEmail(email);
-		if (student != null) {
-			currentStudent = student;
-		}
 
-		if (currentStudent != null & currentStudent.getStudentPassword().equals(password)) {
+		if (studentService.validateStudent(email, password)) {
+			currentStudent = studentService.getStudentByEmail(email);
 			List<Course> courses = studentService.getStudentCourses(email);
-			out.println("MyClasses");
-			for (Course course : courses) {
-				out.println(course);
+			if (courses.size() != 0) {
+				out.println("Your Classes:");
+				printCourses(courses);
+			} else {
+				out.println("You're not registered in any classes.");
 			}
-			retValue = true;
+			return true;
 		} else {
 			out.println("User Validation failed. GoodBye!");
+			return false;
 		}
-		return retValue;
-	}
+	} // end studentLogin()
 
 	private void registerMenu() {
-		sb.append("\n1.Register a class\n2. Logout\nPlease Enter Selection: ");
+		sb.append("\n1. Register a class\n2. Logout\nPlease Enter Selection: ");
 		out.print(sb);
 		sb.delete(0, sb.length());
 
 		switch (sin.nextInt()) {
-		case 1:
+		case 1: // Register a class
 			List<Course> allCourses = courseService.getAllCourses();
-			List<Course> studentCourses = studentService.getStudentCourses(currentStudent.getStudentEmail());
-			allCourses.removeAll(studentCourses);
-			out.printf("%5s%15S%15s\n", "ID", "Course", "Instructor");
-			for (Course course : allCourses) {
-				out.println(course);
+			List<Course> studentCourses = studentService.getStudentCourses(currentStudent.getSEmail());
+			if(studentCourses != null) {
+				allCourses.removeAll(studentCourses);
 			}
+			out.println("\nAvailable Courses:");
+			printCourses(allCourses);
 			out.println();
 			out.print("Enter Course Number: ");
-			int number = sin.nextInt();
-			Course newCourse = courseService.GetCourseById(number);
+			int number;
 
-			if (newCourse != null) {
-				studentService.registerStudentToCourse(currentStudent.getStudentEmail(), newCourse);
-				Student temp = studentService.getStudentByEmail(currentStudent.getStudentEmail());
+			// This try/catch block will catch non-integer input, and the inner
+			// conditional will catch integer values that do not correspond to
+			// any course id
+			try {
+				number = sin.nextInt();
+				Course newCourse = courseService.getCourseById(number);
+				if (newCourse != null) {
+					studentService.registerStudentToCourse(currentStudent.getSEmail(), newCourse);
+					Student temp = studentService.getStudentByEmail(currentStudent.getSEmail());
 
-				List<Course> sCourses = studentService.getStudentCourses(temp.getStudentEmail());
+					List<Course> sCourses = studentService.getStudentCourses(temp.getSEmail());
 
-				out.println("MyClasses");
-				for (Course course : sCourses) {
-					out.println(course);
+					out.println("\nYour Classes:");
+					printCourses(sCourses);
+				} else {
+					out.println("That course does not exist");
 				}
-			}
-			break;
-		case 2:
+			} catch (InputMismatchException e) {
+				out.println("Entry is not valid");
+			} break;
+		case 2: // exit
 		default:
 			out.println("Goodbye!");
 		}
+	} // end registerMenu()
+
+	private void printCourses(List<Course> courses) {
+		out.printf("%n%-5s%-30s%-15s", "ID", "Course", "Instructor");
+		courses.forEach(c -> out.printf("%n%-5s%-30s%-15s", c.getCId(), c.getCName(), c.getCInstructorName()));
+		out.println();
 	}
 }
