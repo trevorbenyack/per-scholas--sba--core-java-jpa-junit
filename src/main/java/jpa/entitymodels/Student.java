@@ -14,22 +14,28 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-@Log4j
 public class Student {
 
-    @Column(nullable = false)
+    @Column(name = "email", nullable = false)
     @Id
-    String studentEmail;
+    String sEmail;
 
-    @Column(nullable = false)
-    String studentName;
+    @Column(name = "name", nullable = false)
+    String sName;
 
-    @Column(nullable = false)
-    String studentPassword;
+    @Column(name = "password", nullable = false)
+    String sPass;
 
+    // Eager fetching is used b/c of the structure of the methods in StudentService
+    // A join table is used to keep in line with the class structures in the requirements
     @ToString.Exclude
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinTable
+    (
+        name="student_courses",
+        joinColumns=@JoinColumn(name="student_email", referencedColumnName="email"),
+        inverseJoinColumns=@JoinColumn(name="course_id", referencedColumnName ="id")
+    )
     List<Course> sCourses;
 
     @Override
@@ -39,16 +45,16 @@ public class Student {
 
         Student student = (Student) o;
 
-        if (!studentEmail.equals(student.studentEmail)) return false;
-        if (!studentName.equals(student.studentName)) return false;
-        return studentPassword.equals(student.studentPassword);
+        if (!sEmail.equals(student.sEmail)) return false;
+        if (!sName.equals(student.sName)) return false;
+        return sPass.equals(student.sPass);
     }
 
     @Override
     public int hashCode() {
-        int result = studentEmail.hashCode();
-        result = 31 * result + studentName.hashCode();
-        result = 31 * result + studentPassword.hashCode();
+        int result = sEmail.hashCode();
+        result = 31 * result + sName.hashCode();
+        result = 31 * result + sPass.hashCode();
         return result;
     }
 }
