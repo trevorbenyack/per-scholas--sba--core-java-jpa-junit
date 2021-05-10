@@ -3,10 +3,11 @@ This is my submission for the Per Scholas skill-based assessment covering the fo
 
 NOTES:
 - 
-- Seed data is auto-populated!
-    - The program will drop and re-create tables first, then populate the tables with the seed data provided in the exercise.
-- SMSRunner was provided as part of the exercise; but had to be modified because several variable names and methods did not match those listed in the requirements.
-- Domain variables were renamed for clarity
+- Seed data can auto-populated!
+    - To use the seed data, uncomment the last line in the SMSRunner constructor.
+- SMSRunner was provided as part of the exercise; but had to be modified because several variable names and methods did not match those listed in the requirements as well as some of the logic needed to be moved.
+
+
 
 <br>
 Requirements:
